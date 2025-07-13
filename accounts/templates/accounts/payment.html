@@ -1,0 +1,18 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Payment Page{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+  <h2 class="mb-4">🛒 Checkout - Payment</h2>
+
+  <div class="alert alert-info p-4">
+    <h4 class="mb-3">⚠️ Payment Integration Not Available</h4>
+    <p class="mb-0">
+      This is a placeholder payment page. Payment gateway integration (like Razorpay, Stripe, or PayPal) has not been implemented yet.
+    </p>
+  </div>
+
+  <a href="{% url 'home' %}" class="btn btn-secondary mt-4">← Back to Home</a>
+</div>
+{% endblock %}

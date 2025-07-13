@@ -1,0 +1,43 @@
+{% extends "accounts/base.html" %}
+{% block title %}Your Cart{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4">🛒 Your Shopping Cart</h2>
+
+  {% if cart_items %}
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Subtotal</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for key, item in cart_items %}
+      <tr>
+        <td><img src="{{ item.image }}" style="width: 60px; height: 60px; object-fit: cover;"></td>
+        <td>{{ item.name }}</td>
+        <td>₹{{ item.price }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>₹{{ item.price|floatformat:2 }} x {{ item.quantity }} = ₹{{ item.price|floatformat:2|floatformat }}</td>
+        <td>
+          <a href="{% url 'remove_from_cart' key %}" class="btn btn-sm btn-danger">🗑️</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="text-end mt-3">Total: ₹{{ total }}</h4><span>
+  <a class='btn btn-primary'href='{% url 'payment' %}'>Buy Now</a></span>
+
+  {% else %}
+  <div class="alert alert-warning text-center">Your cart is empty!</div>
+  {% endif %}
+</div>
+{% endblock %}

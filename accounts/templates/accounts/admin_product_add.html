@@ -1,0 +1,49 @@
+{% extends "accounts/admin_base.html" %}
+
+{% block title %}Add Product - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Add New Product</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+      {{ form.name.label_tag }} {{ form.name }} {{ form.name.errors }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.description.label_tag }} {{ form.description }} {{ form.description.errors }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.price.label_tag }} {{ form.price }} {{ form.price.errors }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.image_url.label_tag }} {{ form.image_url }} {{ form.image_url.errors }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.category.label_tag }} {{ form.category }} {{ form.category.errors }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.brand.label_tag }} {{ form.brand }} {{ form.brand.errors }}
+    </div>
+
+    <div class="mb-3 form-check">
+      {{ form.in_stock }} {{ form.in_stock.label_tag }}
+      {{ form.in_stock.errors }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.rating.label_tag }} {{ form.rating }} {{ form.rating.errors }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Product</button>
+    <a href="{% url 'admin_product_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

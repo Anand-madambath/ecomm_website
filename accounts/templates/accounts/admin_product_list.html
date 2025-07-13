@@ -1,0 +1,133 @@
+{% extends "accounts/admin_base.html" %}
+
+{% block title %}Manage Products{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4 fw-bold">Admin - Manage Products</h2>
+
+
+  <div class="container mt-3">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+
+  <form method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+      <select name="category" class="form-select">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
+            {{ cat.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <input type="number" name="min_price" class="form-control" placeholder="Min Price" value="{{ request.GET.min_price }}">
+    </div>
+    <div class="col-md-2">
+      <input type="number" name="max_price" class="form-control" placeholder="Max Price" value="{{ request.GET.max_price }}">
+    </div>
+    <div class="col-md-2">
+      <select name="min_rating" class="form-select">
+        <option value="">Min Rating</option>
+        {% for i in "12345" %}
+          <option value="{{ i }}" {% if request.GET.min_rating == i %}selected{% endif %}>{{ i }}+</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select name="sort" class="form-select">
+        <option value="">Sort By</option>
+        <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+        <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+        <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest</option>
+      </select>
+    </div>
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+  </form>
+
+
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+    {% for product in page_obj %}
+    <div class="col">
+      <div class="card h-100 shadow-lg border-0 rounded-4">
+        <img src="{{ product.image_url }}" class="card-img-top rounded-top-4"
+             alt="{{ product.name }}" style="height: 220px; object-fit: cover;">
+
+        <div class="card-body text-center d-flex flex-column px-4">
+          <h5 class="card-title fw-semibold mb-2">{{ product.name }}</h5>
+          <p class="text-muted small mb-2">{{ product.description|truncatewords:15 }}</p>
+          <p class="text-primary fw-bold fs-5 mb-2">₹{{ product.price }}</p>
+
+          <div class="mb-3" style="color: #ffc107;">
+            {% with rating=product.avg_rating|default:0 %}
+              {% for i in "12345" %}
+                {% if forloop.counter <= rating|floatformat:0 %}
+                  ★
+                {% else %}
+                  ☆
+                {% endif %}
+              {% endfor %}
+            {% endwith %}
+          </div>
+
+          <div class="d-flex justify-content-center gap-3 mt-auto">
+            <a href="{% url 'admin_product_edit' product.id %}" class="btn btn-sm btn-outline-success"> Edit</a>
+            <form action="{% url 'delete_product' product.id %}" method="POST" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger"
+                      onclick="return confirm('Are you sure you want to delete this product?')">
+                🗑️ Delete
+              </button>
+            </form>
+            <a href="{% url 'product_details' product.id %}" class="btn btn-sm btn-outline-primary"> View</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col">
+      <div class="alert alert-warning text-center w-100">No products found.</div>
+    </div>
+    {% endfor %}
+  </div>
+
+
+  <nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+          <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ num }}">{{ num }}</a>
+        </li>
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+{% endblock %}

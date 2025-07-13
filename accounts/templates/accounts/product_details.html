@@ -1,0 +1,103 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}{{ product.name }} Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6">
+      <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid rounded shadow">
+    </div>
+
+   
+    <div class="col-md-6">
+      <h2>{{ product.name }}</h2>
+      <p class="text-muted">Category: {{ product.category.name }}</p>
+      <p><strong>Brand:</strong> {{ product.brand|default:"N/A" }}</p>
+      <p><strong>Price:</strong> ₹{{ product.price }}</p>
+
+      <p><strong>Rating:</strong>
+        <span class="text-warning">
+            {% for _ in full_stars %}★{% endfor %}
+            {% if half_star %}½{% endif %}
+            {% for _ in empty_stars %}☆{% endfor %}
+        </span>
+        ({{ avg_rating }}/5)
+        </p>
+
+
+
+      <p><strong>Status:</strong> 
+        {% if product.in_stock %}
+          <span class="text-success">In Stock</span>
+        {% else %}
+          <span class="text-danger">Out of Stock</span>
+        {% endif %}
+      </p>
+
+      <p class="mt-4">{{ product.description }}</p>
+
+      <div class="mt-4">
+        <a href="/cart/add/{{ product.id }}/" class="btn btn-primary me-2">Add to Cart</a>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Back</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="mt-5">
+    <h4>Customer Reviews</h4><p><strong>Total Reviews:</strong> {{ total_reviews }}</p>
+
+    {% for review in reviews %}
+      <div class="border rounded p-3 mb-3 bg-light">
+        <strong>{{ review.user.username }}</strong>
+        <span class="text-warning">
+          {% for i in "12345" %}
+            {% if forloop.counter <= review.rating %}
+              ★
+            {% else %}
+              ☆
+            {% endif %}
+          {% endfor %}
+        </span>
+        <p class="mb-0">{{ review.comment }}</p>
+      </div>
+    {% empty %}
+      <p>No reviews yet.</p>
+    {% endfor %}
+  </div>
+
+  {% if not user_review %}
+    <div class="mt-4">
+      <h5>Leave a Review</h5>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          {{ form.rating.label_tag }} {{ form.rating }}
+        </div>
+        <div class="mb-3">
+          {{ form.comment.label_tag }} {{ form.comment }}
+        </div>
+        <button type="submit" class="btn btn-success">Submit Review</button>
+      </form>
+    </div>
+  {% else %}
+    <div class="alert alert-info mt-4">
+      You have already reviewed this product.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+
+
+{% if user.is_authenticated %}
+  {% if not user_review %}
+  {% else %}
+    <div class="alert alert-info">You have already reviewed this product.</div>
+  {% endif %}
+{% else %}
+  <div class="alert alert-warning">
+    Please <a href="{% url 'login' %}?next={{ request.path }}">log in</a> to leave a review.
+  </div>
+{% endif %}
