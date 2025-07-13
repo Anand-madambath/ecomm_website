@@ -21,10 +21,9 @@ Supports **admin product management**, **user reviews**, and **authentication wi
 - Products include name, description, price, image, and category
 
 ### ⭐ Review System
-- Authenticated users can post **one review per product**
+- Authenticated users can post one review per product
 - Reviews include rating (1-5) and feedback
-- Product ratings are **aggregated automatically**
-- Admins can delete any review
+- Product rating
 
 ### 🔄 API Endpoints
 - `/api/products/` — View all products (All users)
@@ -39,32 +38,8 @@ Supports **admin product management**, **user reviews**, and **authentication wi
 ## 🛠️ Tech Stack
 
 - Python 3
-- Django 4.x
+- Django 
 - Django REST Framework
-- SQLite3 (or use PostgreSQL in production)
+- SQLite3
 
----
 
-## 📦 Installation
-
-```bash
-# Clone the repo
-git clone https://github.com/yourusername/your-repo-name.git
-cd your-repo-name
-
-# Create virtual environment
-python -m venv env
-source env/bin/activate  # On Windows: env\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run migrations
-python manage.py makemigrations
-python manage.py migrate
-
-# Create a superuser (admin)
-python manage.py createsuperuser
-
-# Run the server
-python manage.py runserver
